@@ -17,17 +17,13 @@ public class Plotter extends JPanel {
     // checks CALC_TIMES a pixel to see if it is in the Mandelbrot set
     public boolean calculatePixel(double x, double y) {
         Complex z = Complex.ZERO;
-        MySet<Complex> set = new MySet<>();
         Complex prevZ = Complex.ZERO;
         for (int i=0;i<CALC_TIMES;i++) {
             prevZ = z;
             z = magicFunction(z, new Complex(x,y));
-            if (z.isNaN() || z.equals(prevZ)) break;
-            set.add(z);
+            if (z.isNaN() || z.equals(prevZ)) return false;
         }
-        //if (x == -1 && y == 0) System.out.println(set.size());
-        if (set.size()<=CALC_TIMES-20) return true;
-        return false;
+        return true;
     }
 
     public Plotter(int width, int height) {
@@ -59,7 +55,6 @@ public class Plotter extends JPanel {
         //System.out.println(x+" "+y+"   "+x2+" "+y2);
 
         g.setColor(color);
-        //g.fillArc(WIDTH/2-x2-POINT_RADIUS/2,HEIGHT/2-y2-POINT_RADIUS/2,POINT_RADIUS,POINT_RADIUS,0,360);
         g.fillRect(WIDTH/2-x2, HEIGHT/2-y2, POINT_RADIUS, POINT_RADIUS);
 
     }
@@ -77,11 +72,11 @@ public class Plotter extends JPanel {
 
     // Uses calculatePixel to calculate all pixels
     public void drawFractal(Graphics g) {
-        for (int x=0;x<WIDTH;x++) {
-            for (int y=0;y<HEIGHT;y++) {
-                int x2=WIDTH/2-x;
-                int y2=HEIGHT/2-y;
-                if (!calculatePixel(map(x2,-(WIDTH/2), WIDTH/2, -2, 2), map(y2,-(HEIGHT/2), HEIGHT/2, -2, 2))) drawPoint(g, map(x2,-(WIDTH/2), WIDTH/2, -2, 2), map(y2,-(HEIGHT/2), HEIGHT/2, -2, 2), Color.BLACK);
+        for (int x=0;x<WIDTH-1;x++) {
+            for (int y=0;y<HEIGHT-1;y++) {
+                int x2=WIDTH/2-x-1;
+                int y2=HEIGHT/2-y-1;
+                if (calculatePixel(map(x2,-(WIDTH/2), WIDTH/2-1, -2, 2), map(y2,-(HEIGHT/2), HEIGHT/2-1, -2, 2))) drawPoint(g, map(x2,-(WIDTH/2), WIDTH/2, -2, 2), map(y2,-(HEIGHT/2), HEIGHT/2, -2, 2), Color.BLACK);
             }
         }
 
