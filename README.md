@@ -3,7 +3,7 @@
 ## Warning: This is buggy and extremely innefficient.<br/> 
 
 <br/>
-A software that can render the border of the Mandelbrot fractal. 
+A software that can render the border of the Mandelbrot fractal and zoom to it (though it can generate up to 3 iterations)
 <br/>
 
 ## Building
