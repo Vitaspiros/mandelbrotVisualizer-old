@@ -7,6 +7,8 @@ public class App extends JFrame {
     static final int WIDTH = 800;
     static final int HEIGHT = 800;
 
+    static Plotter plotter;
+
     Container cp;
     public static void main(String[] args) throws Exception {
         App app = new App();
@@ -21,6 +23,8 @@ public class App extends JFrame {
         this.pack();
         cp=getContentPane();
 
-        cp.add(new Plotter(WIDTH,HEIGHT));
+        plotter = new Plotter(WIDTH,HEIGHT);
+        plotter.addMouseListener(new MouseHandler());
+        cp.add(plotter);
     }
 }

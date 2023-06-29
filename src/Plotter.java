@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+
 import javax.swing.JPanel;
 
 public class Plotter extends JPanel {
@@ -8,6 +10,10 @@ public class Plotter extends JPanel {
 
     final int POINT_RADIUS = 1;
     final int CALC_TIMES = 100; // how many times a single pixel is calculated
+
+    double mappingNum = 2;
+    double offsetX = 0;
+    double offsetY = 0;
 
     // the magic function of the mandelbrot set
     public Complex magicFunction(Complex z, Complex c) {
@@ -49,9 +55,9 @@ public class Plotter extends JPanel {
         g.drawLine(0,(int)(WIDTH/2),WIDTH,(int)(WIDTH/2));
     }
 
-    public void drawPoint(Graphics g,double x, double y, Color color) {
-        int x2=(int)map(x,-2,2,-(WIDTH/2),WIDTH/2);
-        int y2=(int)map(y,-2,2,-(WIDTH/2),HEIGHT/2);
+    public void drawPoint(Graphics g,double x, double y, Color color, double offsetX, double offsetY) {
+        int x2=(int)map(x+offsetX,-mappingNum,mappingNum,-(WIDTH/2),WIDTH/2);
+        int y2=(int)map(y+offsetY,-mappingNum,mappingNum,-(WIDTH/2),HEIGHT/2);
         //System.out.println(x+" "+y+"   "+x2+" "+y2);
 
         g.setColor(color);
@@ -59,9 +65,9 @@ public class Plotter extends JPanel {
 
     }
 
-    public double map(double value, int leftMin, int leftMax, int rightMin, int rightMax) {
-        int leftSpan = leftMax - leftMin;
-        int rightSpan = rightMax - rightMin;
+    public double map(double value, double leftMin, double leftMax, double rightMin, double rightMax) {
+        double leftSpan = leftMax - leftMin;
+        double rightSpan = rightMax - rightMin;
 
         // Convert the left range into a 0-1 range (float)
         double valueScaled = (double)(value - leftMin) / (double)(leftSpan);
@@ -76,10 +82,29 @@ public class Plotter extends JPanel {
             for (int y=0;y<HEIGHT-1;y++) {
                 int x2=WIDTH/2-x-1;
                 int y2=HEIGHT/2-y-1;
-                if (calculatePixel(map(x2,-(WIDTH/2), WIDTH/2-1, -2, 2), map(y2,-(HEIGHT/2), HEIGHT/2-1, -2, 2))) drawPoint(g, map(x2,-(WIDTH/2), WIDTH/2, -2, 2), map(y2,-(HEIGHT/2), HEIGHT/2, -2, 2), Color.BLACK);
+                if (calculatePixel(map(x2,-(WIDTH/2), WIDTH/2-1, -mappingNum, mappingNum), map(y2,-(HEIGHT/2), HEIGHT/2-1, -mappingNum, mappingNum))) drawPoint(g, map(x2,-(WIDTH/2), WIDTH/2, -mappingNum, mappingNum), map(y2,-(HEIGHT/2), HEIGHT/2, -mappingNum, mappingNum), Color.BLACK, offsetX, offsetY);
             }
         }
 
         System.out.println("DONE!");
+    }
+
+    public void zoom(MouseEvent e) {
+        if (e.getButton()==MouseEvent.BUTTON1) {
+            int x=e.getX();
+            int y=e.getY();
+
+            offsetX+=map(x, 0, WIDTH, -mappingNum, mappingNum) / (mappingNum / 2);
+            offsetY+=map(y, 0, HEIGHT, -mappingNum, mappingNum) / (mappingNum / 2);
+
+            mappingNum/=2;
+        } else if (e.getButton()==MouseEvent.BUTTON3) {
+            mappingNum = 2;
+
+            offsetX = 0;
+            offsetY = 0;
+        }
+
+        repaint();
     }
 }
