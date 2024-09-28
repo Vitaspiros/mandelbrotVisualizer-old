@@ -1,3 +1,5 @@
+# Better re-write of the project at [Mandelbrot Viewer](https://github.com/Vitaspiros/mandelbrotViewer). This repository will be archived.
+
 # Mandelbrot Set Visualizer
 
 ## Warning: This is buggy and extremely innefficient.<br/> 
